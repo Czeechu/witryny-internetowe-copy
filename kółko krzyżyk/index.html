@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kółko i krzyżyk</title>
+  <link rel = "stylesheet" href = "style.css" />
+</head>
+<body>
+  <div class="board"></div>
+  <div class="message"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const board = document.querySelector(".board");
+  const cells = [];
+  let currentPlayer = "X";
+  let gameEnded = false;
+
+  function createBoard() {
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.addEventListener("click", () => handleCellClick(i));
+      board.appendChild(cell);
+      cells.push(cell);
+    }
+  }
+
+  function handleCellClick(index) {
+    if (gameEnded || cells[index].textContent !== "") {
+      return;
+    }
+
+    cells[index].textContent = currentPlayer;
+    cells[index].classList.add(currentPlayer);
+    checkWinCondition();
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+  }
+
+  function checkWinCondition() {
+    const winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6] // Diagonals
+    ];
+
+    for (let combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (
+        cells[a].textContent === currentPlayer &&
+        cells[b].textContent === currentPlayer &&
+        cells[c].textContent === currentPlayer
+      ) {
+        endGame(`Player ${currentPlayer} wins!`);
+        return;
+      }
+    }
+
+    if (isBoardFull()) {
+      endGame("It's a tie!");
+    }
+  }
+
+  function isBoardFull() {
+    return cells.every((cell) => cell.textContent !== "");
+  }
+
+  function endGame(message) {
+    gameEnded = true;
+    document.querySelector(".message").textContent = message;
+  }
+
+  createBoard();
+});
+  </script>
+</body>
+</html>
